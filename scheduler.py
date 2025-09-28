@@ -1,15 +1,15 @@
-import schedule
-import time
-from datetime import datetime
-from app import run_market_research, summarize_reports
+import schedule, time, threading
+from market_research import run_market_research
+from pdca_agent import generate_pdca_report, summarize_reports
 
-# 日次・週次・月次スケジュール
-schedule.every().day.at("00:00").do(run_market_research)
-schedule.every().friday.at("23:55").do(lambda: summarize_reports("weekly"))
-schedule.every(30).days.at("23:55").do(lambda: summarize_reports("monthly"))
+def scheduled_tasks():
+    schedule.every().friday.at("00:00").do(run_market_research)
+    schedule.every().friday.at("00:05").do(lambda: generate_pdca_report(run_market_research()))
+    schedule.every().friday.at("00:10").do(lambda: summarize_reports("30days"))
 
-print("🚀 AI市場調査エージェントスケジューラ起動")
+    while True:
+        schedule.run_pending()
+        time.sleep(60)
 
-while True:
-    schedule.run_pending()
-    time.sleep(60)
+t = threading.Thread(target=scheduled_tasks, daemon=True)
+t.start()
