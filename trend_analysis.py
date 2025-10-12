@@ -1,11 +1,12 @@
-import os
 import requests
-from requests.utils import quote
 from pytrends.request import TrendReq
+from requests.utils import quote
+import matplotlib.pyplot as plt
+import numpy as np
+import os
 
 PIXABAY_API_KEY = os.getenv("TNPIXABAY")
 UNSPLASH_API_KEY = os.getenv("TNUNSPLASH")
-
 TARGET_KEYWORDS = ["fitness", "eco", "travel"]
 
 def get_pixabay_count(keyword: str) -> int:
@@ -48,3 +49,22 @@ def run_market_research(keywords=TARGET_KEYWORDS):
             "final_score": final_score
         })
     return results
+
+def plot_scores(results):
+    labels = [r["keyword"] for r in results]
+    trends = [r["trends_score"] for r in results]
+    competition = [r["competition_score"] for r in results]
+    final = [r["final_score"] for r in results]
+    x = np.arange(len(labels))
+    plt.figure(figsize=(10,5))
+    plt.plot(x, trends, marker='o', label='Trends Score')
+    plt.plot(x, competition, marker='o', label='Competition Score')
+    plt.plot(x, final, marker='o', label='Final Score')
+    plt.xticks(x, labels)
+    plt.ylim(0, 100)
+    plt.title("市場調査スコア")
+    plt.xlabel("キーワード")
+    plt.ylabel("スコア")
+    plt.legend()
+    plt.grid(True)
+    plt.show()

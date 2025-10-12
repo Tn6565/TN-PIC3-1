@@ -1,18 +1,8 @@
-import json
+from ai_agent import client
 
-LEARNING_FILE = "learning_data.json"
-
-def generate_pdca_report(results, client):
-    # 過去学習履歴を取得
-    with open(LEARNING_FILE, "r", encoding="utf-8") as f:
-        learning_data = json.load(f)
-    recent_history = learning_data[-5:] if len(learning_data) >= 5 else learning_data
-
+def generate_pdca_report(results):
+    recent_history = []
     prompt = f"""
-あなたは市場調査AIアシスタントです。
-過去の学習履歴:
-{recent_history}
-
 最新調査結果:
 {results}
 
@@ -33,3 +23,6 @@ def generate_pdca_report(results, client):
         ]
     )
     return response.choices[0].message.content
+
+def summarize_reports(period="weekly"):
+    return "集計まとめ処理（ファイル読み込みや分析）"
