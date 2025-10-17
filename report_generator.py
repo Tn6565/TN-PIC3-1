@@ -1,7 +1,15 @@
-from ai_agent import client
+from dotenv import load_dotenv
+import os
+from openai import OpenAI
+
+# .env から API キー読み込み
+load_dotenv()
+api_key = os.getenv("TNSYSTEM1")
+print("API Key読み込み:", "成功" if api_key else "失敗")
+
+client = OpenAI(api_key=api_key)
 
 def generate_pdca_report(results):
-    recent_history = []
     prompt = f"""
 最新調査結果:
 {results}
